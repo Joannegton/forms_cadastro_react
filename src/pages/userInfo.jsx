@@ -1,38 +1,67 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const UserInfo = () => {
+    const navigate = useNavigate();
     const location = useLocation();
-    const user = location.state.user;
+    const userId = location.state?.userId;
 
-    const userimage = "../img/perfilPadrao"; 
+    const userimage = "../img/perfilPadrao";
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${userId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const userData = await response.json();
+                setData(userData);
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchData();
+    }, [userId]);
 
+    const returnForm = () => {
+        navigate('/', { state: { userData: data } });
+    }
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+    if (!data) return <p>No user data!</p>;
 
     return (
         <section className="user-info p-4 mb-4 rounded shadow-sm">
-            <button id="editButton" className="btn btn-primary mr-2 ">Editar Perfil</button>
+            <button id="editButton" className="btn btn-primary mr-2" onClick={returnForm}>Editar Perfil</button>
             <div className="row align-items-center justify-content-between mb-3">
-                <div className="col-lg-5 col-sm-12  text-center my-3 my-md-0">
-                    <img src={user.profileImage || userimage} alt="Perfil do Usuário" className="rounded-circle" style={{ width: '150px', height: '150px' }}/>
+                <div className="col-lg-5 col-sm-12 text-center my-3 my-md-0">
+                    <img src={data.profileImage || userimage} alt="Perfil do Usuário" className="rounded-circle" style={{ width: '150px', height: '150px' }}/>
                 </div>
-                <div className="col-lg-7 col-sm-12  text-lg-left text-center">
-                    <h1 id="userName">{user.name}</h1>
-                    <p id="userAge">{user.age} anos</p>
+                <div className="col-lg-7 col-sm-12 text-lg-left text-center">
+                    <h1 id="userName">{data.name}</h1>
+                    <p id="userAge">{data.age} anos</p>
                 </div>
             </div>
 
             <div className="row justify-content-around align-items-start">
                 <div className="col-lg-7 col-sm-12 card mb-3 mb-md-0 pb-2">
                     <h5 className="card-title mt-3">Sobre mim</h5>
-                    <p className="card-text text-justify" id="userBio">{user.bio}</p>  
+                    <p className="card-text text-justify" id="userBio">{data.bio}</p>  
                 </div>
                 <div className="col-lg-4 col-sm-12 card pb-2">
                     <h5 className="card-title mt-3">Endereço</h5>
-                    <p className="card-text text-justify" id="userAddress">{user.address}</p>
-                    <p className="card-text text-justify" id="userDistrict">{user.district}</p>
-                    <p className="card-text text-justify" id="userCity">{user.city}</p>
-                    <p className="card-text text-justify" id="userUf">{user.uf}</p>
+                    <p className="card-text text-justify" id="userAddress">{data.address}</p>
+                    <p className="card-text text-justify" id="userDistrict">{data.district}</p>
+                    <p className="card-text text-justify" id="userCity">{data.city}</p>
+                    <p className="card-text text-justify" id="userUf">{data.uf}</p>
                 </div>
             </div>               
         </section>
