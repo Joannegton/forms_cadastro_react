@@ -1,24 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import UserForm from './pages/forms';
+import UserInfo from './pages/userInfo';
+
+import './css/globals.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <main className="App container py-4 mx-auto">
+        <Router>
+          <Routes>
+            <Route path="/" element={<UserForm />} />
+            <Route path="/user-info" element={<UserInfo />} />
+          </Routes>
+        </Router>
+    </main>
   );
 }
 
