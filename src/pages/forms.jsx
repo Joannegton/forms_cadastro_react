@@ -162,12 +162,12 @@ const UserForm = () => {
 
     return (
         <section className="container-form bg-light">
-<form id="updateForm" onSubmit={handleSubmit(userData ? onUpdate : onSubmit)}>                
-                <div className="container">
+        <form id="updateForm" onSubmit={handleSubmit(userData ? onUpdate : onSubmit)}>                
+                <div>
                     <h1 className="display-5 mt-1 mb-3 text-center">{userData? "Editar Úsuario" : "Cadastro de Usuário"}</h1>
                 </div>  
-                <div className="row mb-lg-3">
-                    <div className="col-lg-8 col-sm-12 form-group mb-sm-3">
+                <div className="row">
+                    <div className="col-lg-8 col-sm-12 form-group mb-3">
                         <label htmlFor="name">Nome:</label>
                         <input type="text" className="form-control" {...register("name")} value={state.formData.name || ''} onChange={handleInputChange} placeholder="Wellington Jhon Silva" required/>
                     </div>
@@ -177,28 +177,28 @@ const UserForm = () => {
                     </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group mb-3">
                     <label htmlFor="bio">Biografia:</label>
                     <textarea className="form-control" {...register("bio")} value={state.formData.bio || ''} onChange={handleInputChange} placeholder="Diga-nos sobre você." required></textarea>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group mb-3">
                     <label htmlFor="address">Endereço:</label>
                     <input type="text" className="form-control" {...register("address")} value={state.formData.address || ''} onChange={handleInputChange} placeholder="Rua dores de campos, 456" autoComplete="new-password" required/>
                 </div>
-                <div className="form-group">
+                <div className="form-group mb-3">
                     <label htmlFor="district">Bairro:</label>
                     <input type="text" className="form-control" {...register("district")} value={state.formData.district || ''} onChange={handleInputChange} placeholder="Vila industrial" autoComplete="new-password" required/>
                 </div>
 
                 <div className="row">
-                    <div className="col-md-6 col-12 form-group">
+                    <div className="col-md-6 col-12 form-group mb-sm-3">
                         <label htmlFor="uf">Estado:</label>
                         <select className="form-control" {...register("uf")} onChange={handleUfChange} value={state.formData.uf || ''} autoComplete="new-password" required>
                             {state.ufs.map(uf => <option key={uf.id} value={uf.sigla}>{uf.nome}</option>)}
                         </select>
                     </div>
-                    <div className="col-md-6 col-12 form-group">
+                    <div className="col-md-6 col-12 form-group mb-4">
                         <label htmlFor="city">Cidade:</label>
                         <select
                             className="form-control"
@@ -211,7 +211,7 @@ const UserForm = () => {
                     </div>
                 </div>
 
-                <div className="form-group mt-3">
+                <div className="form-group">
                     <label htmlFor="profileImage">Foto de Perfil:</label>
                     <input type="file" className="form-control-file" {...register("profileImage")} accept="image/*" onChange={onImageChange} />
                     {state.image && (
@@ -241,7 +241,7 @@ const UserForm = () => {
                         </div>
                     )}
                 </div> 
-                <div className="form-group button-group text-center mt-3">
+                <div className="form-group button-group text-center mt-4">
                     <button type="submit" className="btn btn-primary">
                         {userData ? 'Atualizar' : 'Cadastrar'}
                     </button>

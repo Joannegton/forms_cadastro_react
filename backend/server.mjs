@@ -18,7 +18,7 @@ app.post('/api/users', async (req, res) => {
     try {
         let { name, age, bio, address, district, city, uf, profileImage } = req.body;
         if (!profileImage) {
-            profileImage = "../img/perfilPadrao";
+            profileImage = "";
         }
         const newUser = new User({ name, age, bio, address, district, city, uf, profileImage });
         const savedUser = await newUser.save();

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
+import userImage from "../img/perfilPadrao.jpg";
 const UserInfo = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const userId = location.state?.userId;
 
-    const userimage = "../img/perfilPadrao";
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -41,13 +40,13 @@ const UserInfo = () => {
     return (
         <section className="user-info p-4 mb-4 rounded shadow-sm">
             <button id="editButton" className="btn btn-primary mr-2" onClick={returnForm}>Editar Perfil</button>
-            <div className="row align-items-center justify-content-between mb-3">
-                <div className="col-lg-5 col-sm-12 text-center my-3 my-md-0">
-                    <img src={data.profileImage || userimage} alt="Perfil do Usuário" className="rounded-circle" style={{ width: '150px', height: '150px' }}/>
+            <div className="row align-items-center mb-3">
+                <div className="col-lg-5 col-sm-12 d-flex justify-content-lg-end justify-content-sm-center my-3 my-md-0">
+                    <img className="rounded-circle" style={{ width: '150px', height: '150px' }} src={data.profileImage === "" ? userImage : data.profileImage} alt="Perfil do Usuário" />                
                 </div>
-                <div className="col-lg-7 col-sm-12 text-lg-left text-center">
+                <div className="col-lg-7 col-sm-12 text-left text-sm-center">
                     <h1 id="userName">{data.name}</h1>
-                    <p id="userAge">Idade: {data.age} anos</p>
+                    <p id="userAge ">Idade: {data.age} anos</p>
                 </div>
             </div>
 
