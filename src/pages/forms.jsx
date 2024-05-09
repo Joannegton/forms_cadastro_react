@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useRef } from 'react';
+import React, { useReducer, useEffect, useRef} from 'react';
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from 'react-router-dom';
 import Cropper from 'react-cropper';
@@ -31,18 +31,24 @@ function reducer(state, action) {
 
 const UserForm = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
+    
     const cropperRef = useRef(null);
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, setValue } = useForm();
     const navigate = useNavigate();
     const location = useLocation();
     const userData = location.state?.userData;
+
+    const addressRef = useRef();
 
     useEffect(() => {
         fetchUfs();
         if (userData) {
             dispatch({ type: 'SET_FORM_DATA', payload: userData });
+            for (const field in userData) {
+                setValue(field, userData[field]);
+            }
         }
-    }, [userData]);
+    }, [userData, setValue]);
 
     useEffect(() => {
         if (state.formData.uf) {
@@ -98,6 +104,7 @@ const UserForm = () => {
 
     const onSubmit = async (data) => {
         data.profileImage = state.croppedImage;
+        console.log(data);
 
         try {
             const response = await fetch('http://localhost:5000/api/users', {
@@ -112,10 +119,36 @@ const UserForm = () => {
                 throw new Error('Network response was not ok');
             }
 
-            const datas = await response.json();
-            const userId = datas.user._id; 
+            const dataResponse = await response.json();
+            const userId = dataResponse.user._id
+
             navigate('/user-info', { state: { userId: userId } });
 
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const onUpdate = async (data) => {
+        if (state.croppedImage) {
+            data.profileImage = state.croppedImage;
+        }
+
+        try {
+            const userId = userData._id;
+            const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            navigate('/user-info', { state: { userId: userId } });
         } catch (error) {
             console.error('Error:', error);
         }
@@ -131,37 +164,37 @@ const UserForm = () => {
         <section className="container-form bg-light">
 <form id="updateForm" onSubmit={handleSubmit(userData ? onUpdate : onSubmit)}>                
                 <div className="container">
-                    <h1 className="display-5 mt-1 mb-3 text-center">Cadastro de Usuário</h1>
+                    <h1 className="display-5 mt-1 mb-3 text-center">{userData? "Editar Úsuario" : "Cadastro de Usuário"}</h1>
                 </div>  
                 <div className="row mb-lg-3">
                     <div className="col-lg-8 col-sm-12 form-group mb-sm-3">
                         <label htmlFor="name">Nome:</label>
-                        <input type="text" className="form-control" {...register("name")} value={state.formData.name || ''} onChange={handleInputChange} placeholder="Wellington Jhon Silva"/>
+                        <input type="text" className="form-control" {...register("name")} value={state.formData.name || ''} onChange={handleInputChange} placeholder="Wellington Jhon Silva" required/>
                     </div>
                     <div className="col-lg-4 col-sm-12 form-group mb-3">
                         <label htmlFor="age">Idade:</label>
-                        <input type="number" className="form-control" {...register("age")} value={state.formData.age || ''} onChange={handleInputChange} placeholder="21"/>
+                        <input type="number" className="form-control" {...register("age")} value={state.formData.age || ''} onChange={handleInputChange} placeholder="21" required/>
                     </div>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="bio">Biografia:</label>
-                    <textarea className="form-control" {...register("bio")} value={state.formData.bio || ''} onChange={handleInputChange} placeholder="Diga-nos sobre você."></textarea>
+                    <textarea className="form-control" {...register("bio")} value={state.formData.bio || ''} onChange={handleInputChange} placeholder="Diga-nos sobre você." required></textarea>
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="address">Endereço:</label>
-                    <input type="text" className="form-control" {...register("address")} value={state.formData.address || ''} onChange={handleInputChange} placeholder="Rua dores de campos, 456"/>
+                    <input type="text" className="form-control" {...register("address")} value={state.formData.address || ''} onChange={handleInputChange} placeholder="Rua dores de campos, 456" autoComplete="new-password" required/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="district">Bairro:</label>
-                    <input type="text" className="form-control" {...register("district")} value={state.formData.district || ''} onChange={handleInputChange} placeholder="Vila industrial"/>
+                    <input type="text" className="form-control" {...register("district")} value={state.formData.district || ''} onChange={handleInputChange} placeholder="Vila industrial" autoComplete="new-password" required/>
                 </div>
 
                 <div className="row">
                     <div className="col-md-6 col-12 form-group">
                         <label htmlFor="uf">Estado:</label>
-                        <select className="form-control" {...register("uf")} onChange={handleUfChange} value={state.formData.uf || ''}>
+                        <select className="form-control" {...register("uf")} onChange={handleUfChange} value={state.formData.uf || ''} autoComplete="new-password" required>
                             {state.ufs.map(uf => <option key={uf.id} value={uf.sigla}>{uf.nome}</option>)}
                         </select>
                     </div>
@@ -171,7 +204,8 @@ const UserForm = () => {
                             className="form-control"
                             {...register("city")}
                             value={state.formData.city || ''}
-                            onChange={handleInputChange}>
+                            onChange={handleInputChange}
+                            required>
                             {state.cities.map(city => <option key={city.id} value={city.nome}>{city.nome}</option>)}
                         </select>
                     </div>

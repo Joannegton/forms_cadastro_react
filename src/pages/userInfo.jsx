@@ -47,7 +47,7 @@ const UserInfo = () => {
                 </div>
                 <div className="col-lg-7 col-sm-12 text-lg-left text-center">
                     <h1 id="userName">{data.name}</h1>
-                    <p id="userAge">{data.age} anos</p>
+                    <p id="userAge">Idade: {data.age} anos</p>
                 </div>
             </div>
 
@@ -59,9 +59,9 @@ const UserInfo = () => {
                 <div className="col-lg-4 col-sm-12 card pb-2">
                     <h5 className="card-title mt-3">Endereço</h5>
                     <p className="card-text text-justify" id="userAddress">{data.address}</p>
-                    <p className="card-text text-justify" id="userDistrict">{data.district}</p>
-                    <p className="card-text text-justify" id="userCity">{data.city}</p>
-                    <p className="card-text text-justify" id="userUf">{data.uf}</p>
+                    <p className="card-text text-justify" id="userDistrict">Bairro: {data.district}</p>
+                    <p className="card-text text-justify" id="userCity">Cidade: {data.city}</p>
+                    <p className="card-text text-justify" id="userUf">Estado: {data.uf}</p>
                 </div>
             </div>               
         </section>

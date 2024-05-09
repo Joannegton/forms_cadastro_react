@@ -1,12 +1,9 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import multer from 'multer';
-import path from 'path';
 import { connectDb } from "./dbConfig.mjs";
 import User from './schema.mjs';
 
-const UPLOADS_DIR = './uploads';
 const PORT = 5000;
 
 connectDb();
@@ -19,8 +16,10 @@ app.use(bodyParser.urlencoded({ limit: 500 * 1024 * 1024, extended: true }));
 
 app.post('/api/users', async (req, res) => {
     try {
-        const { name, age, bio, address, district, city, uf, profileImage } = req.body;
-
+        let { name, age, bio, address, district, city, uf, profileImage } = req.body;
+        if (!profileImage) {
+            profileImage = "../img/perfilPadrao";
+        }
         const newUser = new User({ name, age, bio, address, district, city, uf, profileImage });
         const savedUser = await newUser.save();
         
