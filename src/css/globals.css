@@ -19,3 +19,10 @@ form {
 .card-text {
   margin-bottom: 0.1rem; 
 }
+
+@media (max-width: 575.98px) {
+  .container-name-age{
+    text-align: center;
+  }
+  
+}

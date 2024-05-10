@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Cropper from 'react-cropper';
 import "cropperjs/dist/cropper.css";
 
+// Estado inicial do Reducer
 const initialState = {
     ufs: [],
     cities: [],
@@ -12,6 +13,7 @@ const initialState = {
     croppedImage: null
 };
 
+// Reducer para tratamento de alterações de estado
 function reducer(state, action) {
     switch (action.type) {
         case 'SET_UFS':
@@ -38,8 +40,6 @@ const UserForm = () => {
     const location = useLocation();
     const userData = location.state?.userData;
 
-    const addressRef = useRef();
-
     useEffect(() => {
         fetchUfs();
         if (userData) {
@@ -50,12 +50,14 @@ const UserForm = () => {
         }
     }, [userData, setValue]);
 
+
     useEffect(() => {
         if (state.formData.uf) {
             fetchCities(state.formData.uf);
         }
     }, [state.formData.uf]);
 
+    // Pega as UFs
     const fetchUfs = async () => {
         try {
             const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome");
@@ -66,6 +68,7 @@ const UserForm = () => {
         }
     };
 
+    // Pega as cidades de acordo com a UF
     const fetchCities = async (uf) => {
         try {
             const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
@@ -76,6 +79,7 @@ const UserForm = () => {
         }
     };
 
+    // Trata as alterações de UF
     const handleUfChange = (event) => {
         const uf = event.target.value;
         dispatch({ type: 'SET_FORM_DATA', payload: { ...state.formData, uf } });
@@ -83,15 +87,8 @@ const UserForm = () => {
         fetchCities(uf);
     };
 
-    const onImageChange = (event) => {
-        const files = event.target.files;
-        let reader = new FileReader();
-        reader.onload = () => {
-            dispatch({ type: 'SET_IMAGE', payload: reader.result });
-        };
-        reader.readAsDataURL(files[0]);
-    };
-
+  
+    // Corta a imagem
     const onCrop = () => {
         const imageElement = cropperRef?.current;
         const cropper = imageElement?.cropper;
@@ -102,9 +99,19 @@ const UserForm = () => {
         }
     };
 
+      // Trata a alteração de imagem
+      const onImageChange = (event) => {
+        const files = event.target.files;
+        let reader = new FileReader();
+        reader.onload = () => {
+            dispatch({ type: 'SET_IMAGE', payload: reader.result });
+        };
+        reader.readAsDataURL(files[0]);
+    };
+
+    // Envia a informações do usuario para o backend
     const onSubmit = async (data) => {
         data.profileImage = state.croppedImage;
-        console.log(data);
 
         try {
             const response = await fetch('http://localhost:5000/api/users', {
@@ -129,6 +136,7 @@ const UserForm = () => {
         }
     };
 
+    // Atualiza as informações do usuário
     const onUpdate = async (data) => {
         if (state.croppedImage) {
             data.profileImage = state.croppedImage;
@@ -154,7 +162,7 @@ const UserForm = () => {
         }
     };
 
-
+    // trata as mudanças do imput
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         dispatch({ type: 'SET_FORM_DATA', payload: { ...state.formData, [name]: value } });
